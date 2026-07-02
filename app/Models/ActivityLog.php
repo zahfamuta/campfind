@@ -2,9 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ActivityLog extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'activity',
+        'description',
+        'ip_address'
+    ];
+
+    // Relasi: Log ini dilakukan oleh seorang User (bisa kosong/null jika sistem otomatis)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

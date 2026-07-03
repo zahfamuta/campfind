@@ -9,33 +9,19 @@ class Item extends Model
 {
     use HasFactory;
 
+    // Daftarkan semua kolom database kelompokmu di sini agar tidak di-blok Laravel
     protected $fillable = [
-        'user_id',
-        'category_id',
-        'title',
-        'description',
-        'type',
+        'name',
+        'category_id', // Database meminta ini
         'location',
-        'date_time',
-        'image',
-        'status'
+        'type',
+        'photo',
+        'status',
+        'user_id'
     ];
 
-    // Relasi: Barang ini milik (dilaporkan oleh) seorang User (Finder)
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    // Relasi: Barang ini termasuk dalam suatu Kategori
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    // Relasi: Barang ini bisa memiliki beberapa klaim (jika banyak yang merasa memiliki)
-    public function claims()
-    {
-        return $this->hasMany(Claim::class);
     }
 }

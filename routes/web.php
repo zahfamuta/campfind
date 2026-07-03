@@ -1,22 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-// Halaman Utama/Welcome
+// Halaman Utama otomatis lempar ke login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
-// Alamat Login CampFind
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-// Proses kirim data login
+// Jalur Login
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
-// Halaman dashboard setelah sukses masuk
+// Jalur Daftar Akun (Register)
+Route::get('/register', [AuthController::class, 'showRegister']);
+Route::post('/register', [AuthController::class, 'register']);
+
+// Halaman Dashboard Utama (Hanya bisa dibuka jika sudah login)
 Route::get('/dashboard', function () {
-    return view('dashboard'); // Memanggil file dashboard.blade.php milik kelompokmu
+    return view('dashboard');
 })->middleware('auth');
 
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+// Jalur Keluar
+Route::get('/logout', function () {
+    \Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+});

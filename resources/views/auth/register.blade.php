@@ -18,7 +18,6 @@
     </style>
 </head>
 <body>
-    <body>
     <div class="register-card">
         <h2>DAFTAR AKUN</h2>
         <form action="{{ url('/register') }}" method="POST">
@@ -36,18 +35,19 @@
                 <input type="email" name="email" placeholder="nama@kampus.ac.id" required>
             </div>
             <div class="input-group">
-    <label>Nomor Telepon</label>
-    <input type="text" name="phone_number" placeholder="Contoh: 081234567890" required>
-</div>
+                <label>Nomor Telepon</label>
+                <input type="text" name="phone_number" placeholder="Contoh: 081234567890" required>
+            </div>
             <div class="input-group">
                 <label>Password</label>
                 <input type="password" name="password" placeholder="Minimal 6 karakter" required>
             </div>
             <div class="input-group">
                 <label>Status</label>
-                <select name="role">
+                <select name="role" required>
+                    <option value="">-- Pilih Jabatan --</option>
                     <option value="mahasiswa">Mahasiswa</option>
-                    <option value="dosen">Dosen / Staff</option>
+                    <option value="admin">Dosen / Staff</option> 
                 </select>
             </div>
             <button type="submit" class="btn">Daftar Sekarang</button>

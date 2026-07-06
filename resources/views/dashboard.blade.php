@@ -13,32 +13,13 @@
         .welcome-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem; }
         .welcome-card h2 { margin-top: 0; color: #111827; }
         
-        /* Tombol Navigasi */
         .btn-green { background: #16a34a; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; margin-bottom: 1.5rem; }
         .btn-green:hover { background: #15803d; }
         
-        /* Style Filter & Pencarian Sesuai Flowchart */
-        .search-filter-box { background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .search-filter-box input, .search-filter-box select { padding: 0.6rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
-        .search-filter-box input { flex: 1; min-width: 200px; }
-        .btn-search { background: #1e3a8a; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-search:hover { background: #1d4ed8; }
-
-        /* Style Tabel Daftar Barang */
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
         th { background: #1e3a8a; color: white; }
         .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .badge-warning { background: #fef3c7; color: #d97706; }
-        .badge-success { background: #dcfce7; color: #15803d; }
-
-        /* Tombol Metode Pengembalian Sesuai Flowchart */
-        .btn-action { padding: 0.4rem 0.8rem; border-radius: 4px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-right: 0.3rem; }
-        .btn-wa { background: #25d366; color: white; }
-        .btn-wa:hover { background: #20ba5a; }
-        .btn-prodi { background: #3b82f6; color: white; }
-        .btn-prodi:hover { background: #2563eb; }
-        .btn-done { background: #6b7280; color: white; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -63,73 +44,105 @@
             <p style="color: #6b7280; margin: 0;">Aplikasi Pengelolaan Barang Hilang & Temuan Kampus (CampFind)</p>
         </div>
 
-        <a href="{{ url('/lapor-temuan') }}" class="btn-green">➕ Lapor Barang Temuan Baru</a>
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="{{ url('/lapor-temuan') }}" class="btn-green" style="margin-bottom: 0;">➕ Lapor Barang Temuan Baru</a>
+            <a href="{{ url('/lapor-kehilangan') }}" class="btn-green" style="background: #dc2626; margin-bottom: 0;">🔍 Lapor Barang Kehilangan</a>
+        </div>
 
-        <h3>Daftar Laporan Lost & Found</h3>
-
-        <form action="{{ url('/dashboard') }}" method="GET" class="search-filter-box">
-            <input type="text" name="search" placeholder="Cari nama barang atau lokasi..." value="{{ request('search') }}">
-            
-            <select name="category">
-                <option value="">-- Semua Kategori --</option>
-                <option value="Elektronik" {{ request('category') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
-                <option value="Dokumen/Dompet" {{ request('category') == 'Dokumen/Dompet' ? 'selected' : '' }}>Dokumen / Dompet</option>
-                <option value="Pakaian/Aksesarois" {{ request('category') == 'Pakaian/Aksesoris' ? 'selected' : '' }}>Pakaian / Aksesoris</option>
-                <option value="Lainnya" {{ request('category') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-            </select>
-
-            <button type="submit" class="btn-search">🔍 Filter & Cari</button>
-            @if(request('search') || request('category'))
-                <a href="{{ url('/dashboard') }}" style="padding-top: 0.6rem; color: #6b7280; text-decoration: none; font-size: 14px;">Reset</a>
-            @endif
-        </form>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama Barang</th>
-                    <th>Kategori</th>
-                    <th>Lokasi</th>
-                    <th>Status</th>
-                    <th>Pelapor</th>
-                    <th>Metode Pengembalian (Klik Klaim)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($items as $item)
+        <h3 style="color: #16a34a; margin-top: 2rem;">🟢 Daftar Barang Temuan (Found)</h3>
+        <div style="overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 3rem;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: #1e40af; color: white;">
                     <tr>
-                        <td><strong>{{ $item->name }}</strong></td>
-                        <td>{{ $item->category }}</td>
-                        <td>{{ $item->location }}</td>
-                        <td>
-                            <span class="badge {{ $item->status == 'Selesai' ? 'badge-success' : 'badge-warning' }}">
-                                {{ $item->status }}
-                            </span>
-                        </td>
-                        <td>{{ $item->user->name }}</td>
-                        <td>
-                            @if($item->status != 'Selesai')
-                                <a href="https://wa.me/{{ $item->user->phone_number }}?text=Halo%20{{ urlencode($item->user->name) }},%20saya%20ingin%20mengonfirmasi%20terkait%20laporan%20barang%20{{ urlencode($item->item_name) }}%20di%20CampFind." 
-                                   target="_blank" class="btn-action btn-wa">
-                                    💬 Via WhatsApp
-                                </a>
+                        <th style="padding: 1rem;">Nama Barang</th>
+                        <th style="padding: 1rem;">Lokasi Ditemukan</th>
+                        <th style="padding: 1rem;">Status</th>
+                        <th style="padding: 1rem;">Penemu (Pelapor)</th>
+                        <th style="padding: 1rem;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($barangTemuan as $item)
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1rem; font-weight: bold;">{{ $item->title }}</td>
+                            <td style="padding: 1rem;">{{ $item->location }}</td>
+                            <td style="padding: 1rem;">
+                                @if($item->status == 'active')
+                                    <span style="background: #fef3c7; color: #d97706; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 14px; font-weight: bold;">Di Amankan di Prodi</span>
+                                @elseif($item->status == 'completed')
+                                    <span style="background: #cbd5e1; color: #4b5563; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 14px; font-weight: bold;">Sudah Diambil</span>
+                                @else
+                                    <span style="background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 14px; font-weight: bold;">{{ $item->status }}</span>
+                                @endif
+                            </td>
+                            <td style="padding: 1rem;">{{ $item->user->name ?? 'Anonim' }}</td>
+                            <td style="padding: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <a href="https://wa.me/{{ $item->user->phone_number ?? '' }}" target="_blank" class="btn-green" style="padding: 0.4rem 0.8rem; font-size: 14px; background: #22c55e; margin: 0; border-radius: 4px;">An 💬 Via WhatsApp</a>
+                                    
+                                    @if($item->status == 'active')
+                                        <button type="button" style="background: #94a3b8; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: not-allowed; font-size: 14px;" disabled>
+                                            🏢 Sudah di Prodi
+                                        </button>
+                                    @elseif($item->status == 'completed')
+                                        <button type="button" style="background: #cbd5e1; color: #64748b; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: not-allowed; font-size: 14px;" disabled>
+                                            ✅ Selesai
+                                        </button>
+                                    @else
+                                        <form action="{{ url('/barang/titip/'.$item->id) }}" method="POST" style="display: inline; margin: 0;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" style="background: #3b82f6; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                                                🏢 Titip Prodi
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="padding: 2rem; text-align: center; color: #6b7280;">Belum ada laporan barang temuan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-                                <a href="https://wa.me/{{ $item->user->phone_number }}?text=Halo%20{{ urlencode($item->user->name) }},%20saya%20pilih%20metode%20Titip%20Prodi%20untuk%20barang%20{{ urlencode($item->item_name) }}.%20Mohon%20berikan%20kode%20klaimnya." 
-                                   target="_blank" class="btn-action btn-prodi">
-                                    🏢 Titip Prodi
-                                </a>
-                            @else
-                                <span class="btn-action btn-done">Barang Sudah Diambil</span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
+        <h3 style="color: #dc2626;">🔴 Daftar Laporan Kehilangan Barang (Lost)</h3>
+        <div style="overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: #991b1b; color: white;">
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #9ca3af;">Barang yang dicari tidak ditemukan atau belum ada laporan.</td>
+                        <th style="padding: 1rem;">Nama Barang</th>
+                        <th style="padding: 1rem;">Perkiraan Lokasi Hilang</th>
+                        <th style="padding: 1rem;">Status</th>
+                        <th style="padding: 1rem;">Pemilik (Pelapor)</th>
+                        <th style="padding: 1rem;">Hubungi Pemilik</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse($barangKehilangan as $item)
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 1rem; font-weight: bold;">{{ $item->title }}</td>
+                            <td style="padding: 1rem;">{{ $item->location }}</td>
+                            <td style="padding: 1rem;"><span style="background: #fee2e2; color: #ef4444; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 14px; font-weight: bold;">{{ $item->status }}</span></td>
+                            <td style="padding: 1rem;">{{ $item->user->name ?? 'Anonim' }}</td>
+                            <td style="padding: 1rem;">
+                                <a href="https://wa.me/{{ $item->user->phone_number ?? '' }}?text=Halo%20{{ urlencode($item->user->name ?? '') }},%20saya%20menemukan%20barang%20yang%20cocok%20dengan%20laporan%20kehilangan%20{{ urlencode($item->title) }}%20Anda." 
+                                   target="_blank" class="btn-green" style="padding: 0.4rem 0.8rem; font-size: 14px; background: #22c55e; margin: 0; border-radius: 4px;">
+                                    💬 Hubungi Pemilik
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="padding: 2rem; text-align: center; color: #6b7280;">Belum ada laporan kehilangan barang.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </body>

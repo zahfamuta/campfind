@@ -9,15 +9,16 @@ class Item extends Model
 {
     use HasFactory;
 
-    // Daftarkan semua kolom database kelompokmu di sini agar tidak di-blok Laravel
     protected $fillable = [
-        'name',
-        'category_id', // Database meminta ini
-        'location',
+        'user_id',
+        'category_id',
+        'title',
+        'description',
         'type',
-        'photo',
-        'status',
-        'user_id'
+        'location',
+        'date_time',
+        'image',
+        'status'
     ];
 
     public function user()
